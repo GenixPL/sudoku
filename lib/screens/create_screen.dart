@@ -20,7 +20,7 @@ class _CreateScreenState extends State<CreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Block? activeBlock = _blocks.tryGetByCords(_activeBlockCords);
+    final Block? activeBlock = _blocks.tryGetByBlockCords(_activeBlockCords);
     final Field? activeField = activeBlock?.fields.tryGetByCords(_activeFieldCords);
 
     return Scaffold(
@@ -64,20 +64,27 @@ class _CreateScreenState extends State<CreateScreen> {
 
     _blocks
       ..remove(activeBlock)
-      ..add(activeBlock.withUpdatedFiled(activeField.filled(number)));
+      ..add(
+        activeBlock.withUpdatedFiled(
+          switch (activeField) {
+            EmptyField() || NotesField() => activeField.filled(number),
+            FilledField() => (activeField.number == number) ? activeField.clear() : activeField.filled(number),
+          },
+        ),
+      );
 
     setState(() {});
   }
 
   void onFieldTap(Block block, Field field) {
-    if (block.cords == _activeBlockCords && field.cords == _activeFieldCords) {
+    if (block.cords == _activeBlockCords && field.blockCords == _activeFieldCords) {
       _activeFieldCords = null;
       _activeBlockCords = null;
       setState(() {});
       return;
     }
 
-    _activeFieldCords = field.cords;
+    _activeFieldCords = field.blockCords;
     _activeBlockCords = block.cords;
     setState(() {});
   }

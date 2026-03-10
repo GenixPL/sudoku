@@ -8,6 +8,7 @@ class FieldCell extends StatelessWidget {
     required this.activeBlock,
     required this.activeField,
     required this.field,
+    required this.blocks,
     required this.block,
     required this.onFieldTap,
   });
@@ -15,6 +16,7 @@ class FieldCell extends StatelessWidget {
   final OnFieldTap onFieldTap;
   final Field? activeField;
   final Block? activeBlock;
+  final List<Block> blocks;
   final Block block;
   final Field field;
 
@@ -49,12 +51,15 @@ class FieldCell extends StatelessWidget {
     required FilledField filledField,
     required double maxSize,
   }) {
+    // TODO(genix): add checking for errors
+
     return Center(
       child: Text(
         filledField.number.toString(),
         style: TextStyle(
           fontSize: maxSize * 0.8,
           height: 1.0,
+          color: blocks.hasError(filledField) ? Colors.red : null,
         ),
       ),
     );
@@ -78,13 +83,11 @@ class FieldCell extends StatelessWidget {
       return color.third;
     }
 
-    final Cords fieldAbsoluteCords = field.absoluteCords(block);
-    final Cords activeFieldAbsoluteCords = activeField.absoluteCords(activeBlock);
-    if (fieldAbsoluteCords.x == activeFieldAbsoluteCords.x) {
+    if (field.absoluteCords.x == activeField.absoluteCords.x) {
       return color.third;
     }
 
-    if (fieldAbsoluteCords.y == activeFieldAbsoluteCords.y) {
+    if (field.absoluteCords.y == activeField.absoluteCords.y) {
       return color.third;
     }
 

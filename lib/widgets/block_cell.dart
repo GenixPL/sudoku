@@ -8,12 +8,14 @@ class BlockCell extends StatelessWidget {
     required this.onFieldTap,
     required this.activeField,
     required this.activeBlock,
+    required this.blocks,
     required this.block,
   });
 
   final OnFieldTap onFieldTap;
   final Field? activeField;
   final Block? activeBlock;
+  final List<Block> blocks;
   final Block block;
 
   @override
@@ -34,6 +36,7 @@ class BlockCell extends StatelessWidget {
                     onFieldTap: onFieldTap,
                     activeField: activeField,
                     activeBlock: activeBlock,
+                    blocks: blocks,
                     block: block,
                     field: block.fields.getByCords(Cords.xy(x, y)),
                   ),

@@ -3,73 +3,76 @@ import 'package:sudoku/models/_models.dart';
 
 extension FieldListExtension on List<Field> {
   Field getByCords(Cords cords) {
-    return firstWhere((f) => f.cords == cords);
+    return firstWhere((f) => f.blockCords == cords);
   }
 
   Field? tryGetByCords(Cords? cords) {
-    return firstWhereOrNull((f) => f.cords == cords);
+    return firstWhereOrNull((f) => f.blockCords == cords);
   }
 }
 
 sealed class Field {
   const Field({
-    required this.cords,
+    required this.blockCords,
+    required this.absoluteCords,
   });
 
-  static List<Field> createEmptyList() {
+  static List<Field> createEmptyList(Cords blockCords) {
     return [
       for (int x = 0; x < 3; x++)
         for (int y = 0; y < 3; y++)
           EmptyField(
-            cords: Cords(
+            blockCords: Cords(
               x: x,
               y: y,
+            ),
+            absoluteCords: Cords(
+              x: blockCords.x * 3 + x,
+              y: blockCords.y * 3 + y,
             ),
           ),
     ];
   }
 
-  final Cords cords;
+  final Cords blockCords;
+  final Cords absoluteCords;
 
   EmptyField clear() {
     return EmptyField(
-      cords: cords,
+      blockCords: blockCords,
+      absoluteCords: absoluteCords,
     );
   }
 
   FilledField filled(int number) {
     return FilledField(
       number: number,
-      cords: cords,
-    );
-  }
-
-  Cords absoluteCords(Block block) {
-    return Cords(
-      x: block.cords.x * 3 + cords.x,
-      y: block.cords.y * 3 + cords.y,
+      blockCords: blockCords,
+      absoluteCords: absoluteCords,
     );
   }
 
   @override
   bool operator ==(Object other) {
-    return other is Field && other.cords == cords;
+    return other is Field && other.absoluteCords == absoluteCords;
   }
 
   @override
-  int get hashCode => Object.hashAll([cords]);
+  int get hashCode => Object.hashAll([absoluteCords]);
 }
 
 class EmptyField extends Field {
   const EmptyField({
-    required super.cords,
+    required super.blockCords,
+    required super.absoluteCords,
   });
 }
 
 class NotesField extends Field {
   const NotesField({
     required this.numbers,
-    required super.cords,
+    required super.blockCords,
+    required super.absoluteCords,
   });
 
   final List<int> numbers;
@@ -78,7 +81,8 @@ class NotesField extends Field {
 class FilledField extends Field {
   const FilledField({
     required this.number,
-    required super.cords,
+    required super.blockCords,
+    required super.absoluteCords,
   });
 
   final int number;
