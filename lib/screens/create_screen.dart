@@ -45,9 +45,15 @@ class _CreateScreenState extends State<CreateScreen> {
       ),
     );
   }
-
-  // TODO(genix): add removing highlight
+  
   void onFieldTap(Block block, Field field) {
+    if (block == _activeBlock && field == _activeField) {
+      _activeField = null;
+      _activeBlock = null;
+      setState(() {});
+      return;
+    }
+
     _activeField = field;
     _activeBlock = block;
     setState(() {});
