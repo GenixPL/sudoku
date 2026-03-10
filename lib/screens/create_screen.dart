@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku/models/_models.dart';
 import 'package:sudoku/utils/_utils.dart';
 import 'package:sudoku/widgets/_widgets.dart';
 
-class CreateScreen extends StatelessWidget {
+class CreateScreen extends StatefulWidget {
   const CreateScreen({
     super.key,
   });
+
+  @override
+  State<CreateScreen> createState() => _CreateScreenState();
+}
+
+class _CreateScreenState extends State<CreateScreen> {
+  late final List<Block> _blocks = Block.createList();
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +25,10 @@ class CreateScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: Container(
-                color: Colors.grey,
+              child: Center(
+                child: BlockTable(
+                  blocks: _blocks,
+                ),
               ),
             ),
             Keyboard(

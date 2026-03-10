@@ -1,3 +1,4 @@
+export 'block.dart';
 export 'board_state.dart';
 export 'field.dart';
 export 'game.dart';

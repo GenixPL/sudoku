@@ -1,11 +1,20 @@
-sealed class Field {
-  final int x;
-  final int y;
+extension FieldListExtension on List<Field> {
+  Field getByCords({
+    required int x,
+    required int y,
+  }) {
+    return firstWhere((f) => (f.x == x) && (f.y == y));
+  }
+}
 
+sealed class Field {
   const Field({
     required this.x,
     required this.y,
   });
+
+  final int x;
+  final int y;
 
   EmptyField clear() {
     return EmptyField(
@@ -20,6 +29,17 @@ class EmptyField extends Field {
     required super.x,
     required super.y,
   });
+
+  static List<EmptyField> createList() {
+    return [
+      for (int x = 0; x < 3; x++)
+        for (int y = 0; y < 3; y++)
+          EmptyField(
+            x: x,
+            y: y,
+          ),
+    ];
+  }
 }
 
 class NotesField extends Field {

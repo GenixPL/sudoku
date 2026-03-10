@@ -2,8 +2,8 @@ import '_models.dart';
 
 class BoardState {
   const BoardState({
-    required this.fields,
+    required this.blocks,
   });
 
-  final List<Field> fields;
+  final List<Block> blocks;
 }

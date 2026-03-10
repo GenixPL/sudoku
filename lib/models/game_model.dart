@@ -4,13 +4,15 @@ import '_models.dart';
 
 class GameModel {
   Future<Result<Game>> createGame({
-    required List<Field> initialFields,
+    required List<Block> initialBlocks,
   }) async {
     return SuccessResult(
       result: Game(
         id: Uuid().v4(),
         states: [
-          BoardState(fields: initialFields),
+          BoardState(
+            blocks: initialBlocks,
+          ),
         ],
       ),
     );
