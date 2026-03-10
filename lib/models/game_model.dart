@@ -1,6 +1,21 @@
+import 'package:uuid/uuid.dart';
+
 import '_models.dart';
 
 class GameModel {
+  Future<Result<Game>> createGame({
+    required List<Field> initialFields,
+  }) async {
+    return SuccessResult(
+      result: Game(
+        id: Uuid().v4(),
+        states: [
+          BoardState(fields: initialFields),
+        ],
+      ),
+    );
+  }
+
   Future<Result<Game>> backState({
     required Game game,
   }) async {
