@@ -1,3 +1,6 @@
+import 'package:equatable/equatable.dart';
+import 'package:sudoku/models/_models.dart';
+
 extension FieldListExtension on List<Field> {
   Field getByCords({
     required int x,
@@ -7,7 +10,7 @@ extension FieldListExtension on List<Field> {
   }
 }
 
-sealed class Field {
+sealed class Field with EquatableMixin {
   const Field({
     required this.x,
     required this.y,
@@ -22,6 +25,20 @@ sealed class Field {
       y: y,
     );
   }
+
+  int absoluteX(Block block) {
+    return block.x * 3 + x;
+  }
+
+  int absoluteY(Block block) {
+    return block.y * 3 + y;
+  }
+
+  @override
+  List<Object?> get props => [
+    x,
+    y,
+  ];
 }
 
 class EmptyField extends Field {

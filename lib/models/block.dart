@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:sudoku/models/_models.dart';
 
 extension BlockListExtension on List<Block> {
@@ -9,7 +10,7 @@ extension BlockListExtension on List<Block> {
   }
 }
 
-class Block {
+class Block with EquatableMixin {
   const Block({
     required this.x,
     required this.y,
@@ -31,4 +32,10 @@ class Block {
   final int x;
   final int y;
   final List<Field> fields;
+
+  @override
+  List<Object?> get props => [
+    x,
+    y,
+  ];
 }

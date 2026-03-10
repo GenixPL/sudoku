@@ -15,6 +15,9 @@ class CreateScreen extends StatefulWidget {
 class _CreateScreenState extends State<CreateScreen> {
   late final List<Block> _blocks = Block.createList();
 
+  Field? _activeField;
+  Block? _activeBlock;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +30,9 @@ class _CreateScreenState extends State<CreateScreen> {
             Expanded(
               child: Center(
                 child: BlockTable(
+                  onFieldTap: onFieldTap,
+                  activeField: _activeField,
+                  activeBlock: _activeBlock,
                   blocks: _blocks,
                 ),
               ),
@@ -38,5 +44,12 @@ class _CreateScreenState extends State<CreateScreen> {
         ).withHorizontalPadding(8),
       ),
     );
+  }
+
+  // TODO(genix): add removing highlight
+  void onFieldTap(Block block, Field field) {
+    _activeField = field;
+    _activeBlock = block;
+    setState(() {});
   }
 }
