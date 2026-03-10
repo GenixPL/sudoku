@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart' hide Block;
 import 'package:sudoku/models/_models.dart';
 import 'package:sudoku/utils/_utils.dart';
 import 'package:sudoku/widgets/_widgets.dart';
@@ -58,8 +59,23 @@ class _CreateScreenState extends State<CreateScreen> {
     );
   }
 
-  void start() {
-    print('start');
+  Future<void> start() async {
+    final Result<Game> res = await GameModel.createGame(
+      initialBlocks: _blocks,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    switch (res) {
+      case SuccessResult<Game>():
+        context.go('/solve/${res.result.id}');
+        return;
+
+      case ErrorResult():
+        throw 'error ${res.error}';
+    }
   }
 
   void onKeyboardTap({

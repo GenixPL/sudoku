@@ -1,4 +1,4 @@
-class Result<T> {
+sealed class Result<T> {
   const Result();
 }
 

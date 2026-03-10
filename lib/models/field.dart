@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:sudoku/models/_models.dart';
+import 'package:sudoku/utils/_utils.dart';
 
 extension FieldListExtension on List<Field> {
   Field getByCords(Cords cords) {
@@ -16,6 +17,72 @@ sealed class Field {
     required this.blockCords,
     required this.absoluteCords,
   });
+
+  static List<Field> fromJson(List<Map<String, dynamic>> jsonList) {
+    final List<Field> toReturn = [];
+    for (Map<String, dynamic> json in jsonList) {
+      final _FieldType type = _FieldType.values.withName(json['type'])!;
+      final Cords blockCords = Cords.fromJson(json['blockCords']);
+      final Cords absoluteCords = Cords.fromJson(json['absoluteCords']);
+      switch (type) {
+        case _FieldType.empty:
+          toReturn.add(
+            EmptyField(
+              blockCords: blockCords,
+              absoluteCords: absoluteCords,
+            ),
+          );
+          continue;
+
+        case _FieldType.notes:
+          toReturn.add(
+            NotesField(
+              numbers: json['numbers'],
+              blockCords: blockCords,
+              absoluteCords: absoluteCords,
+            ),
+          );
+          continue;
+
+        case _FieldType.filled:
+          toReturn.add(
+            FilledField(
+              number: json['number'],
+              blockCords: blockCords,
+              absoluteCords: absoluteCords,
+            ),
+          );
+          continue;
+      }
+    }
+
+    return toReturn;
+  }
+
+  static List<Map<String, dynamic>> toJson(List<Field> fields) {
+    return [
+      for (Field field in fields)
+        {
+          'type': switch (field) {
+            EmptyField() => _FieldType.empty.toString(),
+            NotesField() => _FieldType.notes.toString(),
+            FilledField() => _FieldType.filled.toString(),
+          },
+          'blockCords': field.blockCords.toJson(),
+          'absoluteCords': field.absoluteCords.toJson(),
+          'numbers': switch (field) {
+            EmptyField() => null,
+            NotesField() => field.numbers,
+            FilledField() => null,
+          },
+          'number': switch (field) {
+            EmptyField() => null,
+            NotesField() => null,
+            FilledField() => field.number,
+          },
+        },
+    ];
+  }
 
   static List<Field> createEmptyList(Cords blockCords) {
     return [
@@ -86,4 +153,10 @@ class FilledField extends Field {
   });
 
   final int number;
+}
+
+enum _FieldType {
+  empty,
+  notes,
+  filled,
 }

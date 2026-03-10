@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
             builder: (_, _) => CreateScreen(),
           ),
           GoRoute(
-            path: '/solve/#id',
+            path: '/solve/:id',
             builder: (_, state) => SolveScreen(
               id: state.pathParameters['id']!,
             ),

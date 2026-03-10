@@ -1,6 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:sudoku/models/_models.dart';
+
+part 'block.g.dart';
 
 extension BlockListExtension on List<Block> {
   Block getByBlockCords(Cords blockCords) {
@@ -80,8 +83,7 @@ extension BlockListExtension on List<Block> {
 
   List<Field> getAllFields() {
     return [
-      for (Block block in this)
-        ...block.fields,
+      for (Block block in this) ...block.fields,
     ];
   }
 
@@ -103,7 +105,8 @@ extension BlockListExtension on List<Block> {
 
     // Check rows and columns
     for (Field field in getAllFields()) {
-      if (field.absoluteCords.x != filledField.absoluteCords.x && field.absoluteCords.y != filledField.absoluteCords.y) {
+      if (field.absoluteCords.x != filledField.absoluteCords.x &&
+          field.absoluteCords.y != filledField.absoluteCords.y) {
         continue;
       }
 
@@ -123,6 +126,7 @@ extension BlockListExtension on List<Block> {
   }
 }
 
+@JsonSerializable()
 class Block with EquatableMixin {
   const Block({
     required this.cords,
@@ -140,7 +144,18 @@ class Block with EquatableMixin {
     ];
   }
 
+  factory Block.fromJson(Map<String, dynamic> json) => _$BlockFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BlockToJson(this);
+
+  @JsonKey(name: 'cords')
   final Cords cords;
+
+  @JsonKey(
+    name: 'fields',
+    fromJson: Field.fromJson,
+    toJson: Field.toJson,
+  )
   final List<Field> fields;
 
   Block withUpdatedFiled(Field field) {
