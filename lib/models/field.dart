@@ -1,69 +1,75 @@
-import 'package:equatable/equatable.dart';
+import 'package:collection/collection.dart';
 import 'package:sudoku/models/_models.dart';
 
 extension FieldListExtension on List<Field> {
-  Field getByCords({
-    required int x,
-    required int y,
-  }) {
-    return firstWhere((f) => (f.x == x) && (f.y == y));
+  Field getByCords(Cords cords) {
+    return firstWhere((f) => f.cords == cords);
+  }
+
+  Field? tryGetByCords(Cords? cords) {
+    return firstWhereOrNull((f) => f.cords == cords);
   }
 }
 
-sealed class Field with EquatableMixin {
+sealed class Field {
   const Field({
-    required this.x,
-    required this.y,
+    required this.cords,
   });
 
-  final int x;
-  final int y;
-
-  EmptyField clear() {
-    return EmptyField(
-      x: x,
-      y: y,
-    );
-  }
-
-  int absoluteX(Block block) {
-    return block.x * 3 + x;
-  }
-
-  int absoluteY(Block block) {
-    return block.y * 3 + y;
-  }
-
-  @override
-  List<Object?> get props => [
-    x,
-    y,
-  ];
-}
-
-class EmptyField extends Field {
-  const EmptyField({
-    required super.x,
-    required super.y,
-  });
-
-  static List<EmptyField> createList() {
+  static List<Field> createEmptyList() {
     return [
       for (int x = 0; x < 3; x++)
         for (int y = 0; y < 3; y++)
           EmptyField(
-            x: x,
-            y: y,
+            cords: Cords(
+              x: x,
+              y: y,
+            ),
           ),
     ];
   }
+
+  final Cords cords;
+
+  EmptyField clear() {
+    return EmptyField(
+      cords: cords,
+    );
+  }
+
+  FilledField filled(int number) {
+    return FilledField(
+      number: number,
+      cords: cords,
+    );
+  }
+
+  Cords absoluteCords(Block block) {
+    return Cords(
+      x: block.cords.x * 3 + cords.x,
+      y: block.cords.y * 3 + cords.y,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Field && other.cords == cords;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([cords]);
+}
+
+class EmptyField extends Field {
+  const EmptyField({
+    required super.cords,
+  });
 }
 
 class NotesField extends Field {
   const NotesField({
     required this.numbers,
-    required super.x,
-    required super.y,
+    required super.cords,
   });
 
   final List<int> numbers;
@@ -72,8 +78,7 @@ class NotesField extends Field {
 class FilledField extends Field {
   const FilledField({
     required this.number,
-    required super.x,
-    required super.y,
+    required super.cords,
   });
 
   final int number;

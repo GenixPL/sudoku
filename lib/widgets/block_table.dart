@@ -34,10 +34,7 @@ class BlockTable extends StatelessWidget {
                     onFieldTap: onFieldTap,
                     activeBlock: activeBlock,
                     activeField: activeField,
-                    block: blocks.getByCords(
-                      x: x,
-                      y: y,
-                    ),
+                    block: blocks.getByCords(Cords.xy(x, y)),
                   ),
               ],
             ),

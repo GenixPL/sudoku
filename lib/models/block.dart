@@ -1,19 +1,20 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:sudoku/models/_models.dart';
 
 extension BlockListExtension on List<Block> {
-  Block getByCords({
-    required int x,
-    required int y,
-  }) {
-    return firstWhere((b) => (b.x == x) && (b.y == y));
+  Block getByCords(Cords cords) {
+    return firstWhere((b) => b.cords == cords);
+  }
+
+  Block? tryGetByCords(Cords? cords) {
+    return firstWhereOrNull((b) => b.cords == cords);
   }
 }
 
 class Block with EquatableMixin {
   const Block({
-    required this.x,
-    required this.y,
+    required this.cords,
     required this.fields,
   });
 
@@ -22,20 +23,26 @@ class Block with EquatableMixin {
       for (int x = 0; x < 3; x++)
         for (int y = 0; y < 3; y++)
           Block(
-            x: x,
-            y: y,
-            fields: EmptyField.createList(),
+            cords: Cords.xy(x, y),
+            fields: Field.createEmptyList(),
           ),
     ];
   }
 
-  final int x;
-  final int y;
+  final Cords cords;
   final List<Field> fields;
+
+  Block withUpdatedFiled(Field field) {
+    return Block(
+      cords: cords,
+      fields: fields.toList()
+        ..removeWhere((f) => f == field)
+        ..add(field),
+    );
+  }
 
   @override
   List<Object?> get props => [
-    x,
-    y,
+    cords,
   ];
 }

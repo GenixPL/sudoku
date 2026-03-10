@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku/models/block.dart';
-import 'package:sudoku/models/field.dart';
+import 'package:sudoku/models/_models.dart';
 import 'package:sudoku/widgets/_widgets.dart';
-import 'package:sudoku/widgets/ui_consts.dart';
 
 class FieldCell extends StatelessWidget {
   const FieldCell({
@@ -30,11 +28,33 @@ class FieldCell extends StatelessWidget {
         color: _getColor(context),
         child: AspectRatio(
           aspectRatio: 1,
-          child: switch (field) {
-            EmptyField() => const SizedBox(),
-            NotesField() => Text('N'),
-            FilledField() => Text(field.number.toString()),
-          },
+          child: LayoutBuilder(
+            builder: (context, BoxConstraints constraints) {
+              return switch (field) {
+                EmptyField() => const SizedBox(),
+                NotesField() => Text('N'),
+                FilledField() => _buildFilled(
+                  filledField: field,
+                  maxSize: constraints.maxHeight,
+                ),
+              };
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilled({
+    required FilledField filledField,
+    required double maxSize,
+  }) {
+    return Center(
+      child: Text(
+        filledField.number.toString(),
+        style: TextStyle(
+          fontSize: maxSize * 0.8,
+          height: 1.0,
         ),
       ),
     );
@@ -58,11 +78,13 @@ class FieldCell extends StatelessWidget {
       return color.third;
     }
 
-    if (field.absoluteX(block) == activeField.absoluteX(activeBlock)) {
+    final Cords fieldAbsoluteCords = field.absoluteCords(block);
+    final Cords activeFieldAbsoluteCords = activeField.absoluteCords(activeBlock);
+    if (fieldAbsoluteCords.x == activeFieldAbsoluteCords.x) {
       return color.third;
     }
 
-    if (field.absoluteY(block) == activeField.absoluteY(activeBlock)) {
+    if (fieldAbsoluteCords.y == activeFieldAbsoluteCords.y) {
       return color.third;
     }
 

@@ -15,11 +15,14 @@ class CreateScreen extends StatefulWidget {
 class _CreateScreenState extends State<CreateScreen> {
   late final List<Block> _blocks = Block.createList();
 
-  Field? _activeField;
-  Block? _activeBlock;
+  Cords? _activeFieldCords;
+  Cords? _activeBlockCords;
 
   @override
   Widget build(BuildContext context) {
+    final Block? activeBlock = _blocks.tryGetByCords(_activeBlockCords);
+    final Field? activeField = activeBlock?.fields.tryGetByCords(_activeFieldCords);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('create'),
@@ -31,31 +34,51 @@ class _CreateScreenState extends State<CreateScreen> {
               child: Center(
                 child: BlockTable(
                   onFieldTap: onFieldTap,
-                  activeField: _activeField,
-                  activeBlock: _activeBlock,
+                  activeField: activeField,
+                  activeBlock: activeBlock,
                   blocks: _blocks,
                 ),
               ),
             ),
             Keyboard(
-              onTap: print,
+              onTap: (int number) => onKeyboardTap(
+                number: number,
+                activeBlock: activeBlock,
+                activeField: activeField,
+              ),
             ),
           ].withGapsAndPadding(8),
         ).withHorizontalPadding(8),
       ),
     );
   }
-  
+
+  void onKeyboardTap({
+    required int number,
+    required Block? activeBlock,
+    required Field? activeField,
+  }) {
+    if (activeField == null || activeBlock == null) {
+      return;
+    }
+
+    _blocks
+      ..remove(activeBlock)
+      ..add(activeBlock.withUpdatedFiled(activeField.filled(number)));
+
+    setState(() {});
+  }
+
   void onFieldTap(Block block, Field field) {
-    if (block == _activeBlock && field == _activeField) {
-      _activeField = null;
-      _activeBlock = null;
+    if (block.cords == _activeBlockCords && field.cords == _activeFieldCords) {
+      _activeFieldCords = null;
+      _activeBlockCords = null;
       setState(() {});
       return;
     }
 
-    _activeField = field;
-    _activeBlock = block;
+    _activeFieldCords = field.cords;
+    _activeBlockCords = block.cords;
     setState(() {});
   }
 }

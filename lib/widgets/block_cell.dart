@@ -35,10 +35,7 @@ class BlockCell extends StatelessWidget {
                     activeField: activeField,
                     activeBlock: activeBlock,
                     block: block,
-                    field: block.fields.getByCords(
-                      x: x,
-                      y: y,
-                    ),
+                    field: block.fields.getByCords(Cords.xy(x, y)),
                   ),
               ],
             ),
