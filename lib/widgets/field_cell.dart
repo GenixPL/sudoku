@@ -51,8 +51,6 @@ class FieldCell extends StatelessWidget {
     required FilledField filledField,
     required double maxSize,
   }) {
-    // TODO(genix): add checking for errors
-
     return Center(
       child: Text(
         filledField.number.toString(),
