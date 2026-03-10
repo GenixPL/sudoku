@@ -8,12 +8,14 @@ class BlockTable extends StatelessWidget {
     required this.onFieldTap,
     required this.activeField,
     required this.activeBlock,
+    required this.highlightRowsAndColumns,
     required this.blocks,
   });
 
   final OnFieldTap onFieldTap;
   final Field? activeField;
   final Block? activeBlock;
+  final bool highlightRowsAndColumns;
   final List<Block> blocks;
 
   @override
@@ -34,6 +36,7 @@ class BlockTable extends StatelessWidget {
                     onFieldTap: onFieldTap,
                     activeBlock: activeBlock,
                     activeField: activeField,
+                    highlightRowsAndColumns:highlightRowsAndColumns,
                     blocks: blocks,
                     block: blocks.getByBlockCords(Cords.xy(x, y)),
                   ),

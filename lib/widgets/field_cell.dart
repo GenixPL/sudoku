@@ -10,6 +10,7 @@ class FieldCell extends StatelessWidget {
     required this.field,
     required this.blocks,
     required this.block,
+    required this.highlightRowsAndColumns,
     required this.onFieldTap,
   });
 
@@ -17,6 +18,7 @@ class FieldCell extends StatelessWidget {
   final Field? activeField;
   final Block? activeBlock;
   final List<Block> blocks;
+  final bool highlightRowsAndColumns;
   final Block block;
   final Field field;
 
@@ -75,6 +77,10 @@ class FieldCell extends StatelessWidget {
     final bool isActive = (activeField == field) && (activeBlock == block);
     if (isActive) {
       return color.withAlpha((255 * 0.66).toInt());
+    }
+
+    if (!highlightRowsAndColumns) {
+      return Colors.transparent;
     }
 
     if (block == activeBlock) {

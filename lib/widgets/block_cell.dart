@@ -9,6 +9,7 @@ class BlockCell extends StatelessWidget {
     required this.activeField,
     required this.activeBlock,
     required this.blocks,
+    required this.highlightRowsAndColumns,
     required this.block,
   });
 
@@ -16,6 +17,7 @@ class BlockCell extends StatelessWidget {
   final Field? activeField;
   final Block? activeBlock;
   final List<Block> blocks;
+  final bool highlightRowsAndColumns;
   final Block block;
 
   @override
@@ -36,6 +38,7 @@ class BlockCell extends StatelessWidget {
                     onFieldTap: onFieldTap,
                     activeField: activeField,
                     activeBlock: activeBlock,
+                    highlightRowsAndColumns: highlightRowsAndColumns,
                     blocks: blocks,
                     block: block,
                     field: block.fields.getByCords(Cords.xy(x, y)),

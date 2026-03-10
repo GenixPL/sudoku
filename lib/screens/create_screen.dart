@@ -36,6 +36,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   onFieldTap: onFieldTap,
                   activeField: activeField,
                   activeBlock: activeBlock,
+                  highlightRowsAndColumns: false,
                   blocks: _blocks,
                 ),
               ),
@@ -47,10 +48,18 @@ class _CreateScreenState extends State<CreateScreen> {
                 activeField: activeField,
               ),
             ),
+            TextButton(
+              onPressed: start,
+              child: Text('start'),
+            ),
           ].withGapsAndPadding(8),
         ).withHorizontalPadding(8),
       ),
     );
+  }
+
+  void start() {
+    print('start');
   }
 
   void onKeyboardTap({
