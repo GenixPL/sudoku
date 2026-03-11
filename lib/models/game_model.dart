@@ -20,7 +20,7 @@ abstract class GameModel {
       ],
     );
 
-    await _sharedPreferencesAsync.setString(game.id, jsonEncode(game));
+    await _saveGame(game);
 
     return SuccessResult(
       result: game,
@@ -35,27 +35,8 @@ abstract class GameModel {
     );
   }
 
-  static Future<Result<Game>> getGame(String id) async {
-    final String? gameString = await _sharedPreferencesAsync.getString(id);
-    if (gameString == null) {
-      return ErrorResult(
-        error: 'no game with given id ($id)',
-      );
-    }
-
-    final Game game;
-    try {
-      game = Game.fromJson(jsonDecode(gameString));
-    } catch (e) {
-      await _sharedPreferencesAsync.remove(id);
-      return ErrorResult(
-        error: 'failed to parse the game',
-      );
-    }
-
-    return SuccessResult(
-      result: game,
-    );
+  static Future<Result<Game>> getGame(String id) {
+    return _getGame(id);
   }
 
   static Future<Result<Game>> backState({
@@ -76,9 +57,58 @@ abstract class GameModel {
 
   static Future<Result<Game>> fill({
     required Game game,
+    required Block activeBlock,
+    required Field activeField,
+    required int number,
   }) async {
-    return ErrorResult(
-      error: 'not implemented',
+    final Game updatedGame = Game(
+      id: game.id,
+      states: game.states.toList()
+        ..add(
+          BoardState(
+            blocks: game.states.last.blocks.toList()
+              ..remove(activeBlock)
+              ..add(
+                activeBlock.withUpdatedFiled(
+                  switch (activeField) {
+                    EmptyField() || NotesField() => activeField.filled(number),
+                    FilledField() => (activeField.number == number) ? activeField.clear() : activeField.filled(number),
+                  },
+                ),
+              ),
+          ),
+        ),
+    );
+
+    await _saveGame(updatedGame);
+
+    return _getGame(updatedGame.id);
+  }
+
+  static Future<void> _saveGame(Game game) async {
+    await _sharedPreferencesAsync.setString(game.id, jsonEncode(game));
+  }
+
+  static Future<Result<Game>> _getGame(String id) async {
+    final String? gameString = await _sharedPreferencesAsync.getString(id);
+    if (gameString == null) {
+      return ErrorResult(
+        error: 'no game with given id ($id)',
+      );
+    }
+
+    final Game game;
+    try {
+      game = Game.fromJson(jsonDecode(gameString));
+    } catch (e) {
+      await _sharedPreferencesAsync.remove(id);
+      return ErrorResult(
+        error: 'failed to parse the game',
+      );
+    }
+
+    return SuccessResult(
+      result: game,
     );
   }
 }
