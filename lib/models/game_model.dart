@@ -42,9 +42,20 @@ abstract class GameModel {
   static Future<Result<Game>> backState({
     required Game game,
   }) async {
-    return ErrorResult(
-      error: 'not implemented',
+    if (game.states.length <= 1) {
+      return ErrorResult(
+        error: 'no states to pop',
+      );
+    }
+
+    final Game updatedGame = Game(
+      id: game.id,
+      states: game.states.toList()..removeLast(),
     );
+
+    await _saveGame(updatedGame);
+
+    return _getGame(game.id);
   }
 
   static Future<Result<Game>> fillNotes({

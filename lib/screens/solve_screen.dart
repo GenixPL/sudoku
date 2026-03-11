@@ -56,6 +56,19 @@ class _SolveScreenState extends State<SolveScreen> {
                     ),
                   ),
                 ),
+
+                Row(
+                  children: [
+                    _Button(
+                      onTap: onBackTap,
+                      child: Transform.scale(
+                        scaleX: -1,
+                        child: Icon(Icons.redo_rounded),
+                      ),
+                    ),
+                  ],
+                ),
+
                 Keyboard(
                   onTap: (int number) => onKeyboardTap(
                     number: number,
@@ -68,6 +81,25 @@ class _SolveScreenState extends State<SolveScreen> {
         ).withHorizontalPadding(8),
       ),
     );
+  }
+
+  Future<void> onBackTap() async {
+    final Game? game = _game;
+    if (game == null) {
+      return;
+    }
+
+    final Result<Game> res = await GameModel.backState(
+      game: game,
+    );
+    switch (res) {
+      case ErrorResult<Game>():
+        throw 'error ${res.error}';
+
+      case SuccessResult<Game>():
+        _game = res.result;
+        setState(() {});
+    }
   }
 
   void onFieldTap(Block block, Field field) {
@@ -120,5 +152,36 @@ class _SolveScreenState extends State<SolveScreen> {
         _game = res.result;
         setState(() {});
     }
+  }
+}
+
+class _Button extends StatelessWidget {
+  const _Button({
+    required this.child,
+    required this.onTap,
+  });
+
+  final Widget child;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          border: BoxBorder.all(
+            color: Theme.of(context).primaryColor,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: child,
+        ),
+      ),
+    );
   }
 }
