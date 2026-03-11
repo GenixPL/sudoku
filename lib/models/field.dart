@@ -18,7 +18,7 @@ sealed class Field {
     required this.absoluteCords,
   });
 
-  static List<Field> fromJson(List<Map<String, dynamic>> jsonList) {
+  static List<Field> fromJson(List<dynamic> jsonList) {
     final List<Field> toReturn = [];
     for (Map<String, dynamic> json in jsonList) {
       final _FieldType type = _FieldType.values.withName(json['type'])!;
@@ -64,9 +64,9 @@ sealed class Field {
       for (Field field in fields)
         {
           'type': switch (field) {
-            EmptyField() => _FieldType.empty.toString(),
-            NotesField() => _FieldType.notes.toString(),
-            FilledField() => _FieldType.filled.toString(),
+            EmptyField() => _FieldType.empty.name,
+            NotesField() => _FieldType.notes.name,
+            FilledField() => _FieldType.filled.name,
           },
           'blockCords': field.blockCords.toJson(),
           'absoluteCords': field.absoluteCords.toJson(),

@@ -43,8 +43,18 @@ abstract class GameModel {
       );
     }
 
+    final Game game;
+    try {
+      game = Game.fromJson(jsonDecode(gameString));
+    } catch (e) {
+      await _sharedPreferencesAsync.remove(id);
+      return ErrorResult(
+        error: 'failed to parse the game',
+      );
+    }
+
     return SuccessResult(
-      result: Game.fromJson(jsonDecode(gameString)),
+      result: game,
     );
   }
 

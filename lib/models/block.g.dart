@@ -8,7 +8,7 @@ part of 'block.dart';
 
 Block _$BlockFromJson(Map<String, dynamic> json) => Block(
   cords: Cords.fromJson(json['cords'] as Map<String, dynamic>),
-  fields: Field.fromJson(json['fields'] as List<Map<String, dynamic>>),
+  fields: Field.fromJson(json['fields'] as List),
 );
 
 Map<String, dynamic> _$BlockToJson(Block instance) => <String, dynamic>{
