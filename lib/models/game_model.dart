@@ -135,21 +135,54 @@ abstract class GameModel {
     required Field activeField,
     required int number,
   }) async {
+    // Make the one filled
+    final List<Block> updatedBlocks = game.states.last.blocks.toList()
+      ..remove(activeBlock)
+      ..add(
+        activeBlock.withUpdatedFiled(
+          switch (activeField) {
+            EmptyField() || NotesField() => activeField.filled(number),
+            FilledField() => (activeField.number == number) ? activeField.clear() : activeField.filled(number),
+          },
+        ),
+      );
+
+    final List<Block> updatedBlocks2 = [];
+    // Update notes
+    for (Block block in updatedBlocks) {
+      Block updatedBlock = block;
+      for (Field field in block.fields) {
+        switch (field) {
+          case EmptyField():
+          case FilledField():
+            continue;
+
+          case NotesField():
+            final bool isAffected =
+                (field.absoluteCords.x == activeField.absoluteCords.x) ||
+                (field.absoluteCords.y == activeField.absoluteCords.y) ||
+                block == activeBlock;
+
+            if (isAffected) {
+              updatedBlock = updatedBlock.withUpdatedFiled(
+                NotesField(
+                  numbers: field.numbers.toList()..remove(number),
+                  blockCords: field.blockCords,
+                  absoluteCords: field.absoluteCords,
+                ),
+              );
+            }
+        }
+      }
+      updatedBlocks2.add(updatedBlock);
+    }
+
     final Game updatedGame = Game(
       id: game.id,
       states: game.states.toList()
         ..add(
           BoardState(
-            blocks: game.states.last.blocks.toList()
-              ..remove(activeBlock)
-              ..add(
-                activeBlock.withUpdatedFiled(
-                  switch (activeField) {
-                    EmptyField() || NotesField() => activeField.filled(number),
-                    FilledField() => (activeField.number == number) ? activeField.clear() : activeField.filled(number),
-                  },
-                ),
-              ),
+            blocks: updatedBlocks2,
           ),
         ),
     );

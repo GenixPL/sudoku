@@ -162,7 +162,7 @@ class Block with EquatableMixin {
     return Block(
       cords: cords,
       fields: fields.toList()
-        ..removeWhere((f) => f == field)
+        ..removeWhere((f) => f.absoluteCords == field.absoluteCords)
         ..add(field),
     );
   }
