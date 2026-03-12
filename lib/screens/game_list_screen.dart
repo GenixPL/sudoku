@@ -4,6 +4,9 @@ import 'package:sudoku/models/_models.dart';
 import 'package:sudoku/utils/widget_list_extensions.dart';
 import 'package:sudoku/widgets/_widgets.dart';
 
+// TODO(genix): remove notes when filling
+// TODO(genix): add highlights
+// TODO(genix): add editing notes
 class GameListScreen extends StatefulWidget {
   const GameListScreen({super.key});
 
