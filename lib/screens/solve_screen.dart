@@ -18,6 +18,7 @@ class SolveScreen extends StatefulWidget {
 
 class _SolveScreenState extends State<SolveScreen> {
   Game? _game;
+  List<int> _highlights = [];
 
   Cords? _activeFieldCords;
   Cords? _activeBlockCords;
@@ -53,6 +54,7 @@ class _SolveScreenState extends State<SolveScreen> {
                       activeBlock: activeBlock,
                       highlightRowsAndColumns: true,
                       blocks: blocks,
+                      highlights: _highlights,
                     ),
                   ),
                 ),
@@ -80,11 +82,20 @@ class _SolveScreenState extends State<SolveScreen> {
                     activeField: activeField,
                   ),
                 ),
+                HighlightsKeyboard(
+                  onTap: onHighlightTap,
+                  active: _highlights,
+                ),
               ].withGapsAndPadding(8),
           ],
         ).withHorizontalPadding(8),
       ),
     );
+  }
+
+  void onHighlightTap(int number) {
+    _highlights.toggle(number);
+    setState(() {});
   }
 
   Future<void> onAutoFill() async {

@@ -46,4 +46,12 @@ extension ListExtensions<T> on List<T> {
       return null;
     }
   }
+
+  void toggle(T item) {
+    if (contains(item)) {
+      remove(item);
+    } else {
+      add(item);
+    }
+  }
 }

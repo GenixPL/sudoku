@@ -39,6 +39,7 @@ class _CreateScreenState extends State<CreateScreen> {
                   activeBlock: activeBlock,
                   highlightRowsAndColumns: false,
                   blocks: _blocks,
+                  highlights: [],
                 ),
               ),
             ),

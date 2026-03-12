@@ -11,6 +11,7 @@ class BlockCell extends StatelessWidget {
     required this.blocks,
     required this.highlightRowsAndColumns,
     required this.block,
+    required this.highlights,
   });
 
   final OnFieldTap onFieldTap;
@@ -19,6 +20,7 @@ class BlockCell extends StatelessWidget {
   final List<Block> blocks;
   final bool highlightRowsAndColumns;
   final Block block;
+  final List<int> highlights;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class BlockCell extends StatelessWidget {
       child: Table(
         border: TableBorder.all(
           color: Colors.black,
-          width: 2,
+          width: 1.5,
         ),
         children: [
           for (int y = 0; y < 3; y++)
@@ -42,6 +44,7 @@ class BlockCell extends StatelessWidget {
                     blocks: blocks,
                     block: block,
                     field: block.fields.getByCords(Cords.xy(x, y)),
+                      highlights:highlights,
                   ),
               ],
             ),

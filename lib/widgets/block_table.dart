@@ -10,6 +10,7 @@ class BlockTable extends StatelessWidget {
     required this.activeBlock,
     required this.highlightRowsAndColumns,
     required this.blocks,
+    required this.highlights,
   });
 
   final OnFieldTap onFieldTap;
@@ -17,6 +18,7 @@ class BlockTable extends StatelessWidget {
   final Block? activeBlock;
   final bool highlightRowsAndColumns;
   final List<Block> blocks;
+  final List<int> highlights;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class BlockTable extends StatelessWidget {
       child: Table(
         border: TableBorder.all(
           color: Colors.black,
-          width: 4,
+          width: 3,
         ),
         children: [
           for (int y = 0; y < 3; y++)
@@ -39,6 +41,7 @@ class BlockTable extends StatelessWidget {
                     highlightRowsAndColumns:highlightRowsAndColumns,
                     blocks: blocks,
                     block: blocks.getByBlockCords(Cords.xy(x, y)),
+                      highlights:highlights,
                   ),
               ],
             ),

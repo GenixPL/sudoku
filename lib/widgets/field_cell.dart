@@ -12,6 +12,7 @@ class FieldCell extends StatelessWidget {
     required this.block,
     required this.highlightRowsAndColumns,
     required this.onFieldTap,
+    required this.highlights,
   });
 
   final OnFieldTap onFieldTap;
@@ -21,6 +22,7 @@ class FieldCell extends StatelessWidget {
   final bool highlightRowsAndColumns;
   final Block block;
   final Field field;
+  final List<int> highlights;
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +70,12 @@ class FieldCell extends StatelessWidget {
   Widget _buildFilled({
     required FilledField filledField,
   }) {
-    return _buildNumber(
-      number: filledField.number,
-      hasError: blocks.hasError(filledField),
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: _buildNumber(
+        number: filledField.number,
+        hasError: blocks.hasError(filledField),
+      ),
     );
   }
 
@@ -80,13 +85,24 @@ class FieldCell extends StatelessWidget {
   }) {
     return LayoutBuilder(
       builder: (context, BoxConstraints constraints) {
-        return Center(
-          child: Text(
-            number.toString(),
-            style: TextStyle(
-              fontSize: constraints.maxHeight * 0.8,
-              height: 1.0,
-              color: hasError ? Colors.red : null,
+        return Padding(
+          padding: const EdgeInsets.all(1),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: highlights.contains(number) ? Theme.of(context).primaryColor : Colors.transparent,
+            ),
+            child: Center(
+              child: Text(
+                number.toString(),
+                style: TextStyle(
+                  fontSize: constraints.maxHeight * 0.7,
+                  height: 1.0,
+                  color: hasError
+                      ? Colors.red
+                      : (highlights.contains(number) ? Theme.of(context).colorScheme.onPrimary : null),
+                ),
+              ),
             ),
           ),
         );
