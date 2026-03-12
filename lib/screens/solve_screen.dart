@@ -3,7 +3,6 @@ import 'package:sudoku/models/_models.dart';
 import 'package:sudoku/utils/_utils.dart';
 import 'package:sudoku/widgets/_widgets.dart';
 
-// TODO(genix): remove notes when filling
 // TODO(genix): add editing notes
 class SolveScreen extends StatefulWidget {
   const SolveScreen({
@@ -20,7 +19,7 @@ class SolveScreen extends StatefulWidget {
 class _SolveScreenState extends State<SolveScreen> {
   Game? _game;
   final List<int> _highlights = [];
-
+  bool _noteMode = false;
   Cords? _activeFieldCords;
   Cords? _activeBlockCords;
 
@@ -40,56 +39,74 @@ class _SolveScreenState extends State<SolveScreen> {
       appBar: AppBar(
         title: Text(widget.id.split('_').last),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            if (blocks == null)
-              CircularProgressIndicator()
-            else
-              ...[
-                Expanded(
-                  child: Center(
-                    child: BlockTable(
-                      onFieldTap: onFieldTap,
-                      activeField: activeField,
-                      activeBlock: activeBlock,
-                      highlightRowsAndColumns: true,
-                      blocks: blocks,
-                      highlights: _highlights,
-                    ),
-                  ),
-                ),
-
-                Row(
-                  children: [
-                    _Button(
-                      onTap: onBackTap,
-                      child: Transform.scale(
-                        scaleX: -1,
-                        child: Icon(Icons.redo_rounded),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: [
+              if (blocks == null)
+                CircularProgressIndicator()
+              else
+                ...[
+                  Expanded(
+                    child: Center(
+                      child: BlockTable(
+                        onFieldTap: onFieldTap,
+                        activeField: activeField,
+                        activeBlock: activeBlock,
+                        highlightRowsAndColumns: true,
+                        blocks: blocks,
+                        highlights: _highlights,
                       ),
                     ),
-                    _Button(
-                      onTap: onAutoFill,
-                      child: Icon(Icons.app_registration_rounded),
-                    ),
-                  ].withGaps(8),
-                ),
-
-                Keyboard(
-                  onTap: (int number) => onKeyboardTap(
-                    number: number,
-                    activeBlock: activeBlock,
-                    activeField: activeField,
                   ),
-                ),
-                HighlightsKeyboard(
-                  onTap: onHighlightTap,
-                  active: _highlights,
-                ),
-              ].withGapsAndPadding(8),
-          ],
-        ).withHorizontalPadding(8),
+
+                  Row(
+                    children: [
+                      _Button(
+                        onTap: onBackTap,
+                        child: Transform.scale(
+                          scaleX: -1,
+                          child: Icon(
+                            Icons.redo_rounded,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                      _Button(
+                        onTap: onAutoFill,
+                        child: Icon(
+                          Icons.app_registration_rounded,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      _Button(
+                        onTap: () {
+                          _noteMode = !_noteMode;
+                          setState(() {});
+                        },
+                        child: Icon(
+                          Icons.edit,
+                          color: _noteMode ? Theme.of(context).primaryColor : Colors.grey,
+                        ),
+                      ),
+                    ].withGaps(8),
+                  ),
+
+                  Keyboard(
+                    onTap: (int number) => onKeyboardTap(
+                      number: number,
+                      activeBlock: activeBlock,
+                      activeField: activeField,
+                    ),
+                  ),
+                  HighlightsKeyboard(
+                    onTap: onHighlightTap,
+                    active: _highlights,
+                  ),
+                ].withGapsAndPadding(8),
+            ],
+          ).withHorizontalPadding(8),
+        ),
       ),
     );
   }
@@ -160,12 +177,23 @@ class _SolveScreenState extends State<SolveScreen> {
       return;
     }
 
-    final Result<Game> res = await GameModel.fill(
-      game: game,
-      activeBlock: activeBlock,
-      activeField: activeField,
-      number: number,
-    );
+    final Result<Game> res;
+    if (_noteMode) {
+      res = await GameModel.note(
+        game: game,
+        activeBlock: activeBlock,
+        activeField: activeField,
+        number: number,
+      );
+    } else {
+      res = await GameModel.fill(
+        game: game,
+        activeBlock: activeBlock,
+        activeField: activeField,
+        number: number,
+      );
+    }
+
     switch (res) {
       case SuccessResult<Game>():
         _game = res.result;

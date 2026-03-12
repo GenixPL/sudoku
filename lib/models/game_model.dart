@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudoku/utils/_utils.dart';
 import 'package:uuid/uuid.dart';
 
 import '_models.dart';
@@ -121,6 +122,44 @@ abstract class GameModel {
         ..add(
           BoardState(
             blocks: updatedBlocks,
+          ),
+        ),
+    );
+
+    await _saveGame(updatedGame);
+    return _getGame(updatedGame.id);
+  }
+
+  static Future<Result<Game>> note({
+    required Game game,
+    required Block activeBlock,
+    required Field activeField,
+    required int number,
+  }) async {
+    final Game updatedGame = Game(
+      id: game.id,
+      states: game.states.toList()
+        ..add(
+          BoardState(
+            blocks: game.states.last.blocks.toList()
+              ..remove(activeBlock)
+              ..add(
+                activeBlock.withUpdatedFiled(
+                  switch (activeField) {
+                    EmptyField() => NotesField(
+                      numbers: [number],
+                      blockCords: activeField.blockCords,
+                      absoluteCords: activeField.absoluteCords,
+                    ),
+                    NotesField() => NotesField(
+                      numbers: activeField.numbers..toggle(number),
+                      blockCords: activeField.blockCords,
+                      absoluteCords: activeField.absoluteCords,
+                    ),
+                    FilledField() => activeField,
+                  },
+                ),
+              ),
           ),
         ),
     );
