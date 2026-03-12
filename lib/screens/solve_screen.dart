@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku/models/_models.dart';
 import 'package:sudoku/utils/_utils.dart';
-import 'package:sudoku/utils/widget_list_extensions.dart';
 import 'package:sudoku/widgets/_widgets.dart';
 
 class SolveScreen extends StatefulWidget {
@@ -18,7 +17,7 @@ class SolveScreen extends StatefulWidget {
 
 class _SolveScreenState extends State<SolveScreen> {
   Game? _game;
-  List<int> _highlights = [];
+  final List<int> _highlights = [];
 
   Cords? _activeFieldCords;
   Cords? _activeBlockCords;
