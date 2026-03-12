@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sudoku/models/_models.dart';
+import 'package:sudoku/utils/widget_list_extensions.dart';
 import 'package:sudoku/widgets/_widgets.dart';
 
 class GameListScreen extends StatefulWidget {
@@ -14,9 +15,9 @@ class _GameListScreenState extends State<GameListScreen> {
   List<String>? _games;
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
-    _init();
+    _load();
   }
 
   @override
@@ -25,7 +26,7 @@ class _GameListScreenState extends State<GameListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('game list'),
+        title: Text('gameId list'),
       ),
       body: SafeArea(
         child: ExpandedSingleChildScrollView(
@@ -35,10 +36,22 @@ class _GameListScreenState extends State<GameListScreen> {
                 if (games == null)
                   CircularProgressIndicator()
                 else
-                  for (String game in games)
-                    TextButton(
-                      onPressed: () => context.go('/solve/$game'),
-                      child: Text(game.split('_').last),
+                  for (String gameId in games)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () => context.go('/solve/$gameId'),
+                          child: Text(gameId.split('_').last),
+                        ),
+                        IconButton(
+                          onPressed: () => _remove(gameId),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ].withGaps(8),
                     ),
               ],
             ),
@@ -48,7 +61,12 @@ class _GameListScreenState extends State<GameListScreen> {
     );
   }
 
-  Future<void> _init() async {
+  Future<void> _remove(String id) async {
+    await GameModel.removeGame(id);
+    await _load();
+  }
+
+  Future<void> _load() async {
     final Result<List<String>> res = await GameModel.getAllGames();
     switch (res) {
       case SuccessResult<List<String>>():

@@ -37,7 +37,7 @@ sealed class Field {
         case _FieldType.notes:
           toReturn.add(
             NotesField(
-              numbers: json['numbers'],
+              numbers: json['numbers'].whereType<int>().toList(),
               blockCords: blockCords,
               absoluteCords: absoluteCords,
             ),

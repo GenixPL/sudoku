@@ -8,6 +8,10 @@ import '_models.dart';
 abstract class GameModel {
   static final SharedPreferencesAsync _sharedPreferencesAsync = SharedPreferencesAsync();
 
+  static Future<void> removeGame(String id) async {
+    await _sharedPreferencesAsync.remove(id);
+  }
+
   static Future<Result<Game>> createGame({
     required List<Block> initialBlocks,
   }) async {
@@ -58,12 +62,71 @@ abstract class GameModel {
     return _getGame(game.id);
   }
 
-  static Future<Result<Game>> fillNotes({
+  static Future<Result<Game>> autoFillNotes({
     required Game game,
   }) async {
-    return ErrorResult(
-      error: 'not implemented',
+    final BoardState lastState = game.states.last;
+    final List<Field> allFields = lastState.blocks.getAllFields();
+
+    final List<Block> updatedBlocks = [];
+    for (Block block in lastState.blocks) {
+      final List<Field> updatedFields = [];
+      for (Field field in block.fields) {
+        switch (field) {
+          case EmptyField():
+          case NotesField():
+            final List<int> options = List.generate(9, (i) => i + 1);
+
+            final List<FilledField> problematicFields = [];
+            // For through block and remove options
+            problematicFields.addAll(block.fields.whereType());
+            // For through column and remove options
+            problematicFields.addAll(
+              allFields.where((f) => f.absoluteCords.x == field.absoluteCords.x).whereType(),
+            );
+            // For through row and remove options
+            problematicFields.addAll(
+              allFields.where((f) => f.absoluteCords.y == field.absoluteCords.y).whereType(),
+            );
+
+            for (FilledField problematicField in problematicFields) {
+              options.remove(problematicField.number);
+            }
+
+            updatedFields.add(
+              NotesField(
+                numbers: options,
+                blockCords: field.blockCords,
+                absoluteCords: field.absoluteCords,
+              ),
+            );
+            continue;
+
+          case FilledField():
+            updatedFields.add(field);
+            continue;
+        }
+      }
+      updatedBlocks.add(
+        Block(
+          cords: block.cords,
+          fields: updatedFields,
+        ),
+      );
+    }
+
+    final Game updatedGame = Game(
+      id: game.id,
+      states: game.states.toList()
+        ..add(
+          BoardState(
+            blocks: updatedBlocks,
+          ),
+        ),
     );
+
+    await _saveGame(updatedGame);
+    return _getGame(updatedGame.id);
   }
 
   static Future<Result<Game>> fill({
@@ -111,8 +174,10 @@ abstract class GameModel {
     final Game game;
     try {
       game = Game.fromJson(jsonDecode(gameString));
-    } catch (e) {
+    } catch (e, stc) {
       await _sharedPreferencesAsync.remove(id);
+      print(e);
+      print(stc);
       return ErrorResult(
         error: 'failed to parse the game',
       );

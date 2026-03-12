@@ -66,7 +66,11 @@ class _SolveScreenState extends State<SolveScreen> {
                         child: Icon(Icons.redo_rounded),
                       ),
                     ),
-                  ],
+                    _Button(
+                      onTap: onAutoFill,
+                      child: Icon(Icons.app_registration_rounded),
+                    ),
+                  ].withGaps(8),
                 ),
 
                 Keyboard(
@@ -81,6 +85,25 @@ class _SolveScreenState extends State<SolveScreen> {
         ).withHorizontalPadding(8),
       ),
     );
+  }
+
+  Future<void> onAutoFill() async {
+    final Game? game = _game;
+    if (game == null) {
+      return;
+    }
+
+    final Result<Game> res = await GameModel.autoFillNotes(
+      game: game,
+    );
+    switch (res) {
+      case ErrorResult<Game>():
+        throw 'error ${res.error}';
+
+      case SuccessResult<Game>():
+        _game = res.result;
+        setState(() {});
+    }
   }
 
   Future<void> onBackTap() async {

@@ -32,36 +32,65 @@ class FieldCell extends StatelessWidget {
         color: _getColor(context),
         child: AspectRatio(
           aspectRatio: 1,
-          child: LayoutBuilder(
-            builder: (context, BoxConstraints constraints) {
-              return switch (field) {
-                EmptyField() => const SizedBox(),
-                NotesField() => Text('N'),
-                FilledField() => _buildFilled(
-                  filledField: field,
-                  maxSize: constraints.maxHeight,
-                ),
-              };
-            },
-          ),
+          child: switch (field) {
+            EmptyField() => const SizedBox(),
+            NotesField() => _buildNotes(field),
+            FilledField() => _buildFilled(
+              filledField: field,
+            ),
+          },
         ),
       ),
     );
   }
 
+  Widget _buildNotes(NotesField notesField) {
+    return Table(
+      children: [
+        for (int i = 0; i < 3; i++)
+          TableRow(
+            children: [
+              for (int j = 1; j <= 3; j++)
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: notesField.numbers.contains(i * 3 + j)
+                      ? _buildNumber(
+                          number: i * 3 + j,
+                        )
+                      : const SizedBox(),
+                ),
+            ],
+          ),
+      ],
+    );
+  }
+
   Widget _buildFilled({
     required FilledField filledField,
-    required double maxSize,
   }) {
-    return Center(
-      child: Text(
-        filledField.number.toString(),
-        style: TextStyle(
-          fontSize: maxSize * 0.8,
-          height: 1.0,
-          color: blocks.hasError(filledField) ? Colors.red : null,
-        ),
-      ),
+    return _buildNumber(
+      number: filledField.number,
+      hasError: blocks.hasError(filledField),
+    );
+  }
+
+  Widget _buildNumber({
+    required int number,
+    bool hasError = false,
+  }) {
+    return LayoutBuilder(
+      builder: (context, BoxConstraints constraints) {
+        return Center(
+          child: Text(
+            number.toString(),
+            style: TextStyle(
+              fontSize: constraints.maxHeight * 0.8,
+              height: 1.0,
+              color: hasError ? Colors.red : null,
+            ),
+          ),
+        );
+      },
     );
   }
 
