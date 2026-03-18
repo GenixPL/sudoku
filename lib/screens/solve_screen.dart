@@ -3,7 +3,6 @@ import 'package:sudoku/models/_models.dart';
 import 'package:sudoku/utils/_utils.dart';
 import 'package:sudoku/widgets/_widgets.dart';
 
-// TODO(genix): add editing notes
 class SolveScreen extends StatefulWidget {
   const SolveScreen({
     super.key,
