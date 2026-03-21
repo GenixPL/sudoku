@@ -228,11 +228,14 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double width = 35;
+    const double height = 35;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 30,
-        height: 30,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           border: BoxBorder.all(
             color: Theme.of(context).primaryColor,
